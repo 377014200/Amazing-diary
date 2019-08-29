@@ -8,7 +8,7 @@ export default [
    {
       path: '00002',
       name: 'minute_git_00002',
-      title: '连接远程库',
+      title: '工具',
       component: () => import(/* webpackChunkName: "minute~git" */ '../../views/main/minute/git/00002'),
    },
 

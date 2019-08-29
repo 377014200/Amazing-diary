@@ -1,6 +1,53 @@
 <template>
    <div id="cnblogs_post_body">
       <h2>常用命令</h2>
+      <h3>创建 ssh</h3>
+      <p><strong>如果 Git 的命令窗口创建不成功可以用黑窗口执行命令</strong></p>
+      <pre-code :aliases="['plaintext']">
+
+         $ ssh-keygen -t rsa -C "youremail@example.com"
+         // 验证是否成功
+         $ ssh -T git@github.com
+      </pre-code>
+      <p>如果一切顺利的话，可以在用户主目录里找到.ssh目录，里面有id_rsa和id_rsa.pub两个文件，这两个就是SSH Key的秘钥对，id_rsa是私钥，不能泄露出去，id_rsa.pub是公钥，可以放心地告诉任何人</p>
+      <p>然后在远程库中添加:id_rsa.pub 文件里面内容</p>
+      <h3>git config</h3>
+      <p>在git中，我们使用git config 命令用来配置git的配置文件，git配置级别主要有以下3类：</p>
+      <ul>
+         <li>仓库级别 local 【优先级最高】</li>
+         <li>用户级别 global【优先级次之】</li>
+         <li>系统级别 system【优先级最低】</li>
+      </ul>
+      <p>查看仓库配置【必须要进入到具体的目录下，比如要查看TestGit仓库的配置信息】</p>
+      <pre-code :aliases="['plaintext']">
+         $ git config --local -l
+      </pre-code>
+      <p>查看用户配置</p>
+      <pre-code :aliases="['plaintext']">
+         $ git config --global -l
+      </pre-code>
+      <p>查看系统配置</p>
+      <pre-code :aliases="['plaintext']">
+         $ git config --system -l
+      </pre-code>
+      <p>查看所有的配置信息，依次是系统级别、用户级别、仓库级别</p>
+      <pre-code :aliases="['plaintext']">
+         $ git config -l
+      </pre-code>
+
+      <p>常用配置选项</p>
+      <pre-code :aliases="['plaintext']">
+         $ git config -e 编辑配置文件
+
+         $ git config --local -e 编辑仓库级别配置文件
+         $ git config --global -e 编辑用户级别配置文件
+         $ git config --system -e 编辑系统级别配置文件
+      </pre-code>
+      <p>添加配置项目</p>
+      <pre-code :aliases="['plaintext']">
+         $ git config --global user.email “you@example.com”
+         $ git config --global user.name “Your Name”
+      </pre-code>
       <h3>git init </h3>
       <p><strong>Git 使用 git init 命令来初始化一个 Git 仓库</strong></p>
       <p>Git 的很多命令都需要在 Git 的仓库中运行，所以 git init 是使用 Git 的第一个命令。</p>
@@ -45,7 +92,41 @@
 
          $ git log
       </pre-code>
-
+      <p>查看合并路线</p>
+      <pre-code :aliases="['plaintext']">
+         $ git log --graph --pretty=oneline --abbrev-commit
+         * d1be385 (HEAD -> master, origin/master) init hello
+         *   e5e69f1 Merge branch 'dev'
+         |\
+         | *   57c53ab (origin/dev, dev) fix env conflict
+         | |\
+         | | * 7a5e5dd add env
+         | * | 7bd91f1 add new env
+         | |/
+         * |   12a631b merged bug fix 101
+         |\ \
+         | * | 4c805e2 fix bug 101
+         |/ /
+         * |   e1e9c68 merge with no-ff
+         |\ \
+         | |/
+         | * f52c633 add merge
+         |/
+         *   cf810e4 conflict fixed
+      </pre-code>
+      <h3>git reflog</h3>
+      <p>
+         <strong>查看信息(历史)</strong>
+      </p>
+      <pre-code :aliases="['plaintext']">
+         $ git reflog
+      </pre-code>
+      <h3>git rebase</h3>
+      <p>rebase操作可以把本地未push的分叉提交历史整理成直线</p>
+      <p>rebase的目的是使得我们在查看历史提交的变化时更容易，因为分叉的提交需要三方对比。</p>
+      <pre-code :aliases="['plaintext']">
+         $ git rebase
+      </pre-code>
       <h3>git reset</h3>
       <p>
          <strong>版本回退</strong>
@@ -78,19 +159,13 @@
       <p>通过 <span class="red">git checkout -- &#60filename&#62</span>命令找回, 当然必须是版本库里还没有产出这个文件,如果版本库里也没有了,就只能版本回退了
       </p>
 
-      <h3>git push</h3>
-      <p><strong>把本地库的内容推送到远程</strong></p>
-      <p><span class="red"></span></p>
-      <p><span class="red">别忘了第一次要加 -u 参数 以后就不需要了</span></p>
-      <pre-code :aliases="['plaintext']">
-         $ git push -u origin master
-
-         $ git push origin master
-      </pre-code>
-
       <h3>git branch</h3>
       <p><strong>查看分支</strong></p>
       <pre-code :aliases="['plaintext']">
+         $ git branch
+
+         or
+         // 包含远程分支的预览
          $ git branch
       </pre-code>
 
@@ -106,16 +181,51 @@
          // 强制删除某个未合并的分支
          $ git branch -D &#60name&#62
       </pre-code>
+      <p><strong>远程仓库分支关联</strong></p>
+      <p>关联目的是在执行git pull, git push操作时就不需要指定对应的远程分支，你只要没有显示指定，git pull的时候，就会提示你。</p>
+      <p>fatal: The current branch master has no upstream branch.
+         To push the current branch and set the remote as upstream, use
+      </p>
+      <pre-code :aliases="['plaintext']">
+         $ git branch --set-upstream-to=origin/master master
+         Branch 'master' set up to track remote branch 'master' from 'origin'.
+      </pre-code>
 
       <h3>git checkout </h3>
       <p><strong>切换分支</strong></p>
       <pre-code :aliases="['plaintext']">
-         $ git checkout &#60name&#62 or git switch &#60name&#62
+         $ git checkout &#60name&#62
+
+         or
+
+         $ git switch &#60name&#62
       </pre-code>
 
       <p><strong>创建一个分支并切换到这个</strong></p>
-      <pre-code :aliases="['plaintext']">
+      <pre-code :aliases="['html']">
          $ git checkout -b &#60name&#62
+         $ git checkout -b newBranch
+
+         or
+
+         // 创建分支并关联对应的远程库的分支
+         $ git checkout -b  &#60new_branch&#62 [&#60start_point&#62]
+         $ git checkout -b newBranch  origin/newBranch
+      </pre-code>
+
+      <p><strong>基于当前所在分支新建一个赤裸裸的分支，没有任何的提交历史，但是当前分支的内容一一俱全</strong></p>
+      <p>新建的分支，严格意义上说，还不是一个分支，因为HEAD指向的引用中没有commit值，只有在进行一次提交后，它才算得上真正的分支。</p>
+      <pre-code :aliases="['html']">
+         $ git checkout --orphan &#60new_branch&#62
+      </pre-code>
+      <p><strong>撤销某个文件的修改</strong></p>
+
+      <pre-code :aliases="['html']">
+         // 可以指定 commit 的 hash 值
+         $ git checkout [-q] [&#60commit id&#62] [--] &#60paths>
+         or
+         // 如果不填写commit id，则默认会从暂存区检出该文件，如果暂存区为空，则该文件会回滚到最近一次的提交状态。当暂存区为空，如果我们想要放弃对某一个文件的修改，可以用这个命令进行撤销
+         $ git checkout [-q] [--] &#6paths&#62
       </pre-code>
       <h3>git merge</h3>
       <p><strong>合并分支</strong></p>
@@ -208,6 +318,15 @@
 
          </pre-code>
       </ul>
+      <h3>git cherry-pick (拣选)</h3>
+      <p>例如在修改 bug 每个分支都要做同样的修改, 拣选会很有用, 参考 bug 分支</p>
+      <pre-code :aliases="['plaintext']">
+         $ git cherry-pick 179e7c6
+         [dev c985906] .
+         Date: Tue Aug 27 22:20:17 2019 +0800
+         1 file changed, 1 insertion(+), 1 deletion(-)
+
+      </pre-code>
       <h3>git stash</h3>
       <p>
          1. 当正在dev分支上开发某个项目，这时项目中出现一个bug，需要紧急修复，但是正在开发的内容只是完成一半，还不想提交，这时可以用git
@@ -321,6 +440,148 @@
       <p><strong>git stash branch</strong></p>
       <p>从最新的stash创建分支</p>
       <p>应用场景：当储藏了部分工作，暂时不去理会，继续在当前分支进行开发，后续想将stash中的内容恢复到当前工作目录时，如果是针对同一个文件的修改（即便不是同行数据），那么可能会发生冲突，恢复失败，这里通过创建新的分支来解决。可以用于解决stash中的内容和当前目录的内容发生冲突的情景</p>
+
+      <h3>git remote</h3>
+      <p><strong>要查看远程库的信息，用 <span class="red">git remote</span></strong></p>
+      <pre-code :aliases="['plaintext']">
+         $ git remote
+         origin
+
+         or
+
+         下面显示了可以抓取和推送的origin的地址。如果没有推送权限，就看不到push的地址。
+         $ git remote -v
+         origin  git@github.com:michaelliao/learngit.git (fetch)
+         origin  git@github.com:michaelliao/learngit.git (push)
+      </pre-code>
+      <p><strong>git remote add origin</strong></p>
+      <p>连接远程仓库</p>
+      <p><span class="red">origin</span> 予以远程库的名字, 如果同时和码云的远程库有联系, 则使用不同的名字</p>
+      <pre-code :aliases="['plaintext']">
+         $ git remote add origin  git@github.com:michaelliao/learngit.git
+      </pre-code>
+      <p><strong>git remote set-url origin</strong></p>
+      <p>修改远程仓库的URL</p>
+      <pre-code :aliases="['plaintext']">
+         $ git remote set-url origin  git@github.com:377014200/repository.git
+      </pre-code>
+      <p><strong>git remote get-url origin</strong></p>
+      <p>查看远程仓库的URL</p>
+      <pre-code :aliases="['plaintext']">
+         $ git remote get-url origin
+      </pre-code>
+      <h3>git push</h3>
+      <p>向远程仓库推送代码</p>
+      <p>但是，并不是一定要把本地分支往远程推送，那么，哪些分支需要推送，哪些不需要呢？</p>
+      <ul>
+         <li><span class="red">master</span>分支是主分支，因此要时刻与远程同步；</li>
+         <li><span class="red">dev</span>分支是开发分支，团队所有成员都需要在上面工作，所以也需要与远程同步；</li>
+         <li>bug分支只用于在本地修复bug，就没必要推到远程了，除非老板要看看你每周到底修复了几个bug；</li>
+         <li>feature分支是否推到远程，取决于你是否和你的小伙伴合作在上面开发。</li>
+      </ul>
+      <p>总之，就是在Git中，分支完全可以在本地自己藏着玩，是否推送，视你的心情而定！</p>
+      <p>使用 origin 参数并且指定 分支的名字</p>
+      <pre-code :aliases="['html']">
+         $ git push origin &#60branch name&#62
+      </pre-code>
+      <p><span class="red">别忘了第一次要加 -u 参数 以后就不需要了</span></p>
+      <pre-code :aliases="['plaintext']">
+         $ git push -u origin master
+      </pre-code>
+      <h3>git pull</h3>
+      <p>提取远程仓库的代码</p>
+      <p>使用 origin 参数并且指定 分支的名字</p>
+      <pre-code :aliases="['html']">
+         $ git pull origin &#60branch name&#62
+      </pre-code>
+
+      <h3>git tag</h3>
+      <p>标签管理</p>
+      <p>在Git中打标签非常简单，首先，切换到需要打标签的分支上：</p>
+      <pre-code :aliases="['html']">
+         $ git branch
+         * dev
+         master
+         $ git checkout master
+         Switched to branch 'master'
+      </pre-code>
+      <p>然后，敲命令 <span class="red">git tag &#60name&#62</span> 就可以打一个新标签：</p>
+      <pre-code :aliases="['html']">
+         $ git tag v1.0
+      </pre-code>
+      <p>可以用命令 <span class="red">git tag</span> 查看所有标签：</p>
+      <pre-code :aliases="['html']">
+         $ git tag
+         v1.0
+      </pre-code>
+      <p><strong>默认为HEAD，也可以指定一个commit id；</strong></p>
+
+      <pre-code :aliases="['plaintext']">
+         $ git tag v0.9 f52c633
+      </pre-code>
+
+      <p>标签不是按时间顺序列出，而是按字母排序的。可以用 <span class="red">git show &#60tagname&#62</span>查看标签信息：</p>
+      <pre-code :aliases="['html']">
+         $ git show v0.9
+         commit f52c63349bc3c1593499807e5c8e972b82c8f286 (tag: v0.9)
+         Author: Michael Liao &#60askxuefeng@gmail.com&#62
+         Date:   Fri May 18 21:56:54 2018 +0800
+
+         add merge
+
+         diff --git a/readme.txt b/readme.tx
+      </pre-code>
+      <p><strong>创建带有说明的标签，用-a指定标签名，-m指定说明文字：</strong></p>
+      <pre-code :aliases="['html']">
+         $ git show v0.1
+         tag v0.1
+         Tagger: Michael Liao &#60askxuefeng@gmail.com&#62
+         Date:   Fri May 18 22:48:43 2018 +0800
+
+         version 0.1 released
+
+         commit 1094adb7b9b3807259d8cb349e7df1d4d6477073 (tag: v0.1)
+         Author: Michael Liao &#60askxuefeng@gmail.com&#62
+         Date:   Fri May 18 21:06:15 2018 +0800
+
+         append GPL
+
+         diff --git a/readme.txt b/readme.txt
+      </pre-code>
+      <p><strong>如果标签打错了，也可以删除：</strong></p>
+      <pre-code :aliases="['plaintext']">
+         $ git tag -d v0.1
+         Deleted tag 'v0.1' (was f15b0dd)
+      </pre-code>
+      <p>因为创建的标签都只存储在本地，不会自动推送到远程。所以，打错的标签可以在本地安全删除。 如果要推送某个标签到远程，使用命令 <span class="red">git push origin &#60tagname&#62</span>：</p>
+
+      <pre-code :aliases="['plaintext']">
+         $ git push origin v1.0
+         Total 0 (delta 0), reused 0 (delta 0)
+         To github.com:michaelliao/learngit.git
+         * [new tag]         v1.0 -> v1.0
+
+         or
+
+         // 一次性推送全部尚未推送到远程的本地标签
+         $ git push origin --tags
+         Total 0 (delta 0), reused 0 (delta 0)
+         To github.com:michaelliao/learngit.git
+         * [new tag]         v0.9 -> v0.9
+      </pre-code>
+
+      <p>如果标签已经推送到远程，要删除远程标签就麻烦一点，先从本地删除：</p>
+      <p>然后，从远程删除。删除命令也是push，但是格式如下</p>
+      <pre-code :aliases="['plaintext']">
+         $ git tag -d v0.9
+         Deleted tag 'v0.9' (was f52c633)
+
+         and
+         // 远程删除
+         $ git push origin :refs/tags/v0.9
+         To github.com:michaelliao/learngit.git
+         - [deleted]         v0.9
+      </pre-code>
 
 
 

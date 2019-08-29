@@ -1,8 +1,8 @@
 
 # Amazing-diary
-一大米呦抗几楼
+## 一大米呦抗几楼
 
-# hello-world
+## hello-world
 
 ## Project setup
 ```
