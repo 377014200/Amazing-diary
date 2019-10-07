@@ -4,13 +4,19 @@
       <h3>创建 ssh</h3>
       <p><strong>如果 Git 的命令窗口创建不成功可以用黑窗口执行命令</strong></p>
       <pre-code :aliases="['plaintext']">
-
          $ ssh-keygen -t rsa -C "youremail@example.com"
          // 验证是否成功
          $ ssh -T git@github.com
       </pre-code>
       <p>如果一切顺利的话，可以在用户主目录里找到.ssh目录，里面有id_rsa和id_rsa.pub两个文件，这两个就是SSH Key的秘钥对，id_rsa是私钥，不能泄露出去，id_rsa.pub是公钥，可以放心地告诉任何人</p>
       <p>然后在远程库中添加:id_rsa.pub 文件里面内容</p>
+
+      <h3>git commit</h3>
+      <p><strong>修改文件名如何提交到版本库?</strong></p>
+      <pre-code :aliases="['plaintext']">
+         $ git commit --amend -m "[提交了什么说明一下吧]"
+      </pre-code>
+
       <h3>git config</h3>
       <p>在git中，我们使用git config 命令用来配置git的配置文件，git配置级别主要有以下3类：</p>
       <ul>

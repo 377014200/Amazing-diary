@@ -1,7 +1,9 @@
 <template>
    <div id="app">
       <div class="bg-img"></div>
+
       <router-view/>
+      <h1>为什么 css-loader 的 module 选项会造成 hmr 失效</h1>
    </div>
 </template>
 <script>
@@ -11,6 +13,7 @@
       },
       components: {},
       mounted: function () {
+
          var oHtml = document.getElementsByTagName('html')[0];
          var oBody = document.getElementsByTagName('body')[0];
          oBody.style.height = oHtml.style.height
